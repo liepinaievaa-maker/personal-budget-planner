@@ -10,11 +10,20 @@ def display_main_menu():
     print("0. Exit")
 
 
+def get_user_choice():
+    """
+    Gets the user's menu choice.
+    """
+    return input("Please choose an option: ").strip()
+
+
 def main():
     """
     Application entry point.
     """
     display_main_menu()
+    choice = get_user_choice()
+    print(f"You selected: {choice}")
 
 
 if __name__ == "__main__":
