@@ -19,11 +19,17 @@ def get_user_choice():
 
 def main():
     """
-    Application entry point.
+    Main application loop
     """
-    display_main_menu()
-    choice = get_user_choice()
-    print(f"You selected: {choice}")
+    while True:
+        display_main_menu()
+        choice = get_user_choice()
+
+        if choice == "0":
+            print("Thank you for using Personal Budget Planner. Goodbye!\n")
+            break
+        else:
+            print(f"You selected: {choice}\n")
 
 
 if __name__ == "__main__":
