@@ -1,12 +1,21 @@
+def display_main_menu():
+    """
+    Displays the main menu options to the user.
+    """
+    print("\nPersonal Budget Planner")
+    print("-" * 25)
+    print("1. Transactions")
+    print("2. Budgets")
+    print("3. Reports")
+    print("0. Exit")
+
+
 def main():
     """
-    Entry point for the Personal Budget Planner application.
+    Application entry point.
     """
-    print("Personal Budget Planner")
-    print("Application setup complete.")
-    print("Features coming soon!")
+    display_main_menu()
 
 
 if __name__ == "__main__":
     main()
-    
