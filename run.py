@@ -24,12 +24,18 @@ def main():
     while True:
         display_main_menu()
         choice = get_user_choice()
-
-        if choice == "0":
+        
+        if choice == "1":
+            print("Transactions feature coming soon.\n")
+        elif choice == "2":
+            print("Budgets feature coming soon.\n")
+        elif choice == "3":
+            print("Reports feature coming soon.\n")
+        elif choice == "0":
             print("Thank you for using Personal Budget Planner. Goodbye!\n")
             break
         else:
-            print(f"You selected: {choice}\n")
+            print("Invalid choice. Please enter a number from the menu.\n")
 
 
 if __name__ == "__main__":
