@@ -1,3 +1,6 @@
+from app.storage import load_data, save_data
+
+
 def display_main_menu():
     """
     Displays the main menu options to the user.
@@ -21,7 +24,10 @@ def main():
     """
     Main application loop
     """
+    data = load_data()
+
     while True:
+        print(f"\nLoaded {len(data['transactions'])} transactions.")
         display_main_menu()
         choice = get_user_choice()
         
