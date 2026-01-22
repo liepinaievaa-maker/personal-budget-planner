@@ -1,4 +1,5 @@
 from app.storage import load_data, save_data
+from datetime import datetime
 
 
 def display_main_menu():
@@ -20,6 +21,82 @@ def get_user_choice():
     return input("Please choose an option: ").strip()
 
 
+def prompt_for_date():
+    """
+    Prompts user for a date in YYYY-MM-DD format and validates it.
+    Returns the date string.
+    """
+    while True:
+        date_str = input("Enter date (YYYY-MM-DD): ").strip()
+        try:
+            datetime.strptime(date_str, "%Y-%m-%d")
+            return date_str
+        except ValueError:
+            print("Invalid date format. Please use YYYY-MM-DD.")
+
+
+def prompt_for_amount():
+    """
+    Prompts user for an amount and validates it as a positive number.
+    Returns the amount as a float.
+    """
+    while True:
+        amount_str = input("Enter amount (e.g. 12.50): ").strip().replace(",", ".")
+        try:
+            amount = float(amount_str)
+            if amount <= 0:
+                print("Amount must be greater than 0.")
+                continue
+            return amount
+        except ValueError:
+            print("Invalid amount. Please enter a number (e.g. 12.50).")
+
+
+def prompt_for_type():
+    """
+    Prompts user for transaction type: income or expense.
+    Returns 'income' or 'expense'.
+    """
+    while True:
+        t_type = input("Type (income/expense): ").strip().lower()
+        if t_type in ("income", "expense"):
+            return t_type
+        print("Invalid type. Please enter 'income' or 'expense'.")
+
+
+def add_transaction(data):
+    """
+    Prompts the user for transaction details, appends a new transaction
+    to the data dict, and saves it.
+    """
+    print("\nAdd a Transaction")
+    print("-" * 18)
+
+    date_str = prompt_for_date()
+    t_type = prompt_for_type()
+    category = input("Category (e.g. Food, Rent): ").strip()
+    note = input("Note (optional): ").strip()
+    amount = prompt_for_amount()
+
+    next_id = 1
+    if data["transactions"]:
+        next_id = max(t["id"] for t in data["transactions"]) + 1
+
+    transaction = {
+        "id": next_id,
+        "date": date_str,
+        "type": t_type,
+        "category": category if category else "Uncategorized",
+        "amount": amount,
+        "note": note
+    }
+
+    data["transactions"].append(transaction)
+    save_data(data)
+
+    print(f"\nSaved transaction #{next_id} ({t_type}) - {amount:.2f}")
+
+
 def main():
     """
     Main application loop
@@ -32,7 +109,7 @@ def main():
         choice = get_user_choice()
         
         if choice == "1":
-            print("Transactions feature coming soon.\n")
+            add_transaction(data)
         elif choice == "2":
             print("Budgets feature coming soon.\n")
         elif choice == "3":

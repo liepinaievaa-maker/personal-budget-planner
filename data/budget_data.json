@@ -1,4 +1,13 @@
 {
-  "transactions": [],
+  "transactions": [
+    {
+      "id": 1,
+      "date": "2026-01-20",
+      "type": "income",
+      "category": "food",
+      "amount": 45.8,
+      "note": "no"
+    }
+  ],
   "budgets": []
 }
