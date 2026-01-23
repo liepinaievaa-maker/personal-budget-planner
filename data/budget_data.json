@@ -7,6 +7,14 @@
       "category": "food",
       "amount": 45.8,
       "note": "no"
+    },
+    {
+      "id": 2,
+      "date": "2026-01-29",
+      "type": "expense",
+      "category": "rent",
+      "amount": 790.0,
+      "note": ""
     }
   ],
   "budgets": []

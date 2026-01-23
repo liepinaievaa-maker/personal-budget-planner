@@ -97,6 +97,59 @@ def add_transaction(data):
     print(f"\nSaved transaction #{next_id} ({t_type}) - {amount:.2f}")
 
 
+def view_transactions(data):
+    """
+    Displays all transactions in a readable format.
+    """
+    transactions = data["transactions"]
+
+    if len(transactions) == 0:
+        print("No transactions yet.\n")
+        return
+
+    print("All Transactions\n")
+    print("-" * 17)
+
+    for transaction in transactions:
+        print(
+            "ID:", transaction["id"],
+            "| Date:", transaction["date"],
+            "| Type:", transaction["type"],
+            "| Category:", transaction["category"],
+            "| Amount:", transaction["amount"],
+            "| Note:", transaction["note"]
+        )
+
+
+def transactions_flow(data):
+    """
+    Handles the transactions submenu loop.
+    """
+    while True:
+        display_transactions_menu()
+        choice = get_user_choice()
+
+        if choice == "1":
+            add_transaction(data)
+        elif choice == "2":
+            view_transactions(data)
+        elif choice == "0":
+            break
+        else:
+            print("Invalid choice. Please enter a number from the menu.\n")
+
+
+def display_transactions_menu():
+    """
+    Displays the transactions submenu options.
+    """
+    print("\nTransactions")
+    print("-" * 12)
+    print("1. Add transaction")
+    print("2. View transactions")
+    print("0. Back to main menu")
+
+
 def main():
     """
     Main application loop
@@ -109,7 +162,7 @@ def main():
         choice = get_user_choice()
         
         if choice == "1":
-            add_transaction(data)
+            transactions_flow(data)
         elif choice == "2":
             print("Budgets feature coming soon.\n")
         elif choice == "3":
