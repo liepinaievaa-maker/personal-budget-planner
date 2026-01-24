@@ -121,6 +121,29 @@ def view_transactions(data):
         )
 
 
+def monthly_report(data):
+    """
+    Displays income, expenses, and balance for a given month.
+    """
+    month = prompt_for_month()
+
+    income_total = 0
+    expense_total = 0
+
+    for transaction in data["transactions"]:
+        if transaction["date"].startswith(month):
+            if transaction["type"] == "income":
+                income_total += transaction["amount"]
+            elif transaction["type"] == "expense":
+                expense_total += transaction["amount"]
+
+    print("\nMonthly Report for", month)
+    print("-" * 25)
+    print("Total income:", income_total)
+    print("Total expenses:", expense_total)
+    print("Balance:", income_total - expense_total)
+
+
 def transactions_flow(data):
     """
     Handles the transactions submenu loop.
@@ -138,6 +161,16 @@ def transactions_flow(data):
         else:
             print("Invalid choice. Please enter a number from the menu.\n")
 
+
+def prompt_for_month():
+    """
+    Prompts user for a month in YYYY-MM format.
+    """
+    while True:
+        month = input("Enter month (YYYY-MM): ").strip()
+        if len(month) == 7 and month[4] == "-":
+            return month
+        print("Invalid format. Please use YYYY-MM.")
 
 def display_transactions_menu():
     """
@@ -166,7 +199,7 @@ def main():
         elif choice == "2":
             print("Budgets feature coming soon.\n")
         elif choice == "3":
-            print("Reports feature coming soon.\n")
+            monthly_report(data)
         elif choice == "0":
             print("Thank you for using Personal Budget Planner. Goodbye!\n")
             break
