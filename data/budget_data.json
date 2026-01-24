@@ -17,5 +17,11 @@
       "note": ""
     }
   ],
-  "budgets": []
+  "budgets": [
+    {
+      "month": "2026-01",
+      "category": "rent",
+      "limit": 800.0
+    }
+  ]
 }

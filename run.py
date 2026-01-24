@@ -162,6 +162,105 @@ def transactions_flow(data):
             print("Invalid choice. Please enter a number from the menu.\n")
 
 
+def set_budget(data):
+    """
+    Adds or updates a monthly budget for a category.
+    Check if the budget exists for the month and category.
+    And then if not found, create new one.
+    """
+    print("Set Monthly Budget\n")
+    print("-" * 18)
+
+    month = prompt_for_month()
+    category = prompt_for_category()
+    limit = prompt_for_limit()
+    
+    for budget in data["budgets"]:
+        if (budget["month"] == month and
+                budget["category"].lower() == category.lower()):
+            budget["category"] = category
+            budget["limit"] = limit
+            save_data(data)
+            print(f"Updated budget for {category} in {month} to {limit:.2f}\n")
+            return
+    
+    data["budgets"].append({
+        "month": month,
+        "category": category,
+        "limit": limit
+    })
+    save_data(data)
+    print(f"Saved budget for {category} in {month}: {limit:.2f}\n")
+
+
+def view_budget_status(data):
+    """
+    Shows budget usage for a given month by category.
+    And calculate it by the month.
+    """
+    month = prompt_for_month()
+
+    spending_by_category = {}
+
+    for t in data["transactions"]:
+        if t["date"].startswith(month) and t["type"] == "expense":
+            cat = t["category"]
+            spending_by_category[cat] = spending_by_category.get(cat, 0) + t["amount"]
+
+    budgets_for_month = [b for b in data["budgets"] if b["month"] == month]
+
+    print(f"\nBudget Status for {month}")
+    print("-" * 22)
+
+    if len(budgets_for_month) == 0:
+        print("No budgets set for this month.")
+        return
+
+    for b in budgets_for_month:
+        cat = b["category"]
+        limit = b["limit"]
+        spent = spending_by_category.get(cat, 0)
+        remaining = limit - spent
+
+        print(f"\nCategory: {cat}")
+        print(f"Limit: {limit:.2f}")
+        print(f"Spent: {spent:.2f}")
+
+        if remaining >= 0:
+            print(f"Remaining: {remaining:.2f}")
+        else:
+            print(f"Overspent by: {abs(remaining):.2f}")
+
+
+def budgets_flow(data):
+    """
+    Handles the budgets submenu loop.
+    """
+    while True:
+        display_budgets_menu()
+        choice = get_user_choice()
+
+        if choice == "1":
+            set_budget(data)
+        elif choice == "2":
+            view_budget_status(data)
+        elif choice == "0":
+            break
+        else:
+            print("\nInvalid choice. Please enter a number from the menu.")
+
+
+def display_budgets_menu():
+    """
+    Displays the budgets submenu options.
+    """
+    print("Budgets\n")
+    print("-" * 7)
+    print("1. Set monthly budget")
+    print("2. View budget status")
+    print("0. Back to main menu")
+
+
 def prompt_for_month():
     """
     Prompts user for a month in YYYY-MM format.
@@ -171,6 +270,32 @@ def prompt_for_month():
         if len(month) == 7 and month[4] == "-":
             return month
         print("Invalid format. Please use YYYY-MM.")
+
+
+def prompt_for_category():
+    """
+    Prompts user for a category name.
+    """
+    category = input("Enter category (e.g. Food): ").strip()
+    return category if category else "Uncategorized"
+
+
+def prompt_for_limit():
+    """
+    Prompts user for a positive budget limit.
+    Returns float.
+    """
+    while True:
+        limit_str = input("Enter budget limit (e.g. 250): ").strip().replace(",", ".")
+        try:
+            limit = float(limit_str)
+            if limit <= 0:
+                print("Limit must be greater than 0.")
+                continue
+            return limit
+        except ValueError:
+            print("Invalid number. Please enter a valid amount.")
+
 
 def display_transactions_menu():
     """
@@ -197,7 +322,7 @@ def main():
         if choice == "1":
             transactions_flow(data)
         elif choice == "2":
-            print("Budgets feature coming soon.\n")
+            budgets_flow(data)
         elif choice == "3":
             monthly_report(data)
         elif choice == "0":
