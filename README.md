@@ -1,31 +1,146 @@
 ![CI logo](https://codeinstitute.s3.amazonaws.com/fullstack/ci_logo_small.png)
 
-Welcome,
+# Personal Budget Planner
 
-This is the Code Institute student template for deploying your third portfolio project, the Python command-line project. The last update to this file was: **May 26, 2025**
+## Project Overview
 
-## Reminders
+- Personal Budget Planner is a command-line Python application that helps users track income and expenses, set monthly budgets by category, view monthly financial reports, and export data to CSV files. The application is designed for users who want a simple, text-based tool to manage their personal finances without relying on spreadsheets or external services.
 
-- Your code must be placed in the `run.py` file
-- Your dependencies must be placed in the `requirements.txt` file
-- Do not edit any of the other files or your code may not deploy properly
+- The project is built using the Code Institute Python Essentials Template and is deployed to Heroku using a mock terminal interface.
 
-## Creating the Heroku app
+## User Goals
 
-When you create the app, you will need to add two buildpacks from the _Settings_ tab. The ordering is as follows:
+- Record income and expense transactions
 
-1. `heroku/python`
-2. `heroku/nodejs`
+- View a list of all transactions
 
-You must then create a _Config Var_ called `PORT`. Set this to `8000`
+- See monthly summaries of income, expenses, and balance
 
-If you have credentials, such as in the Love Sandwiches project, you must create another _Config Var_ called `CREDS` and paste the JSON into the value field.
+- Set monthly budgets for spending categories
 
-Connect your GitHub repository and deploy as normal.
+- Compare budgets against actual spending
 
-## Constraints
+- Export transactions and reports to CSV files
 
-The deployment terminal is set to 80 columns by 24 rows. That means that each line of text needs to be 80 characters or less otherwise it will be wrapped onto a second line.
+## Site Owner Goals
+
+- Provide a clear, easy-to-use command-line interface
+
+- Ensure all user input is validated to prevent errors
+
+- Store data persistently between sessions
+
+- Demonstrate clean, well-structured Python code
+
+
+## Application Features
+
+### Main Menu
+
+The main menu allows the user to navigate between:
+
+- Transactions
+
+- Budgets
+
+- Reports
+
+- CSV Export
+
+- Exit
+
+The application runs in a loop until the user chooses to exit.
+
+### Transactions
+
+- Add a transaction with date, type (income/expense), category, amount, and optional note
+
+- View all saved transactions
+
+- Transactions are stored persistently in a JSON file
+
+### Monthly Reports
+
+- Generate a monthly report by entering a month in YYYY-MM format
+
+- Displays total income, total expenses, and balance for the selected month
+
+### Budgets
+
+- Set or update a monthly budget for a specific category
+
+- View budget status for a selected month
+
+- Shows spending, remaining budget, or overspend amount
+
+### CSV Export
+
+- Export all transactions to transactions.csv
+
+- Export a monthly summary report to monthly_report_YYYY-MM.csv
+
+## Data Model
+
+Data is stored locally in a JSON file with the following structure:
+{
+  "transactions": [
+    {
+      "id": 1,
+      "date": "2026-01-20",
+      "type": "income",
+      "category": "food",
+      "amount": 45.8,
+      "note": "no"
+    },
+    {
+      "id": 2,
+      "date": "2026-01-29",
+      "type": "expense",
+      "category": "rent",
+      "amount": 790.0,
+      "note": ""
+    }
+  ],
+  "budgets": [
+    {
+      "month": "2026-01",
+      "category": "rent",
+      "limit": 800.0
+    }
+  ]
+}
+
+## Program Flow
+
+- The application starts in run.py
+
+- Data is loaded from the JSON file on startup
+
+- User input is handled through dedicated prompt functions
+
+- Feature-specific logic is separated into reusable functions
+
+- Data is saved back to the JSON file after changes
+
+## Input Validation and Error Handling
+
+- All numeric inputs are validated to ensure correct format and range
+
+- Date and month inputs are validated to prevent invalid values
+
+- Menus handle invalid selections gracefully without crashing
+
+## Testing
+
+## Libraries and Technologies Used
+
+## Deployment
+
+## Credits
+
+## Acknowledgements
+
+## 
 
 ---
 
