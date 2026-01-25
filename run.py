@@ -1,3 +1,5 @@
+import csv
+import os
 from app.storage import load_data, save_data
 from datetime import datetime
 
@@ -11,6 +13,7 @@ def display_main_menu():
     print("1. Transactions")
     print("2. Budgets")
     print("3. Reports")
+    print("4. Export")
     print("0. Exit")
 
 
@@ -41,7 +44,8 @@ def prompt_for_amount():
     Returns the amount as a float.
     """
     while True:
-        amount_str = input("Enter amount (e.g. 12.50): ").strip().replace(",", ".")
+        amount_str = input("Enter amount (e.g. 12.50): ")
+        amount_str = amount_str.strip().replace(",", ".")
         try:
             amount = float(amount_str)
             if amount <= 0:
@@ -174,16 +178,16 @@ def set_budget(data):
     month = prompt_for_month()
     category = prompt_for_category()
     limit = prompt_for_limit()
-    
+
     for budget in data["budgets"]:
-        if (budget["month"] == month and
-                budget["category"].lower() == category.lower()):
+        if (budget["month"] == month and budget["category"].lower()
+                == category.lower()):
             budget["category"] = category
             budget["limit"] = limit
             save_data(data)
             print(f"Updated budget for {category} in {month} to {limit:.2f}\n")
             return
-    
+
     data["budgets"].append({
         "month": month,
         "category": category,
@@ -205,7 +209,9 @@ def view_budget_status(data):
     for t in data["transactions"]:
         if t["date"].startswith(month) and t["type"] == "expense":
             cat = t["category"]
-            spending_by_category[cat] = spending_by_category.get(cat, 0) + t["amount"]
+            spending_by_category[cat] = (
+                spending_by_category.get(cat, 0) + t["amount"]
+            )
 
     budgets_for_month = [b for b in data["budgets"] if b["month"] == month]
 
@@ -282,11 +288,13 @@ def prompt_for_category():
 
 def prompt_for_limit():
     """
-    Prompts user for a positive budget limit.
+    Prompts user for a positive budget limit and the persons input 
+    here should be positive only.
     Returns float.
     """
     while True:
-        limit_str = input("Enter budget limit (e.g. 250): ").strip().replace(",", ".")
+        limit_str = input("Enter budget limit (e.g. 250): ")
+        limit_str = limit_str.strip().replace(",", ".")
         try:
             limit = float(limit_str)
             if limit <= 0:
@@ -295,6 +303,88 @@ def prompt_for_limit():
             return limit
         except ValueError:
             print("Invalid number. Please enter a valid amount.")
+
+
+def display_export_menu():
+    """
+    Displays export submenu options.
+    """
+    print("\nExport")
+    print("-" * 6)
+    print("1. Export all transactions (CSV)")
+    print("2. Export monthly summary report (CSV)")
+    print("0. Back to main menu")
+
+
+def export_flow(data):
+    """
+    Handles the export submenu loop.
+    """
+    while True:
+        display_export_menu()
+        choice = get_user_choice()
+
+        if choice == "1":
+            export_transactions_csv(data)
+        elif choice == "2":
+            export_monthly_report_csv(data)
+        elif choice == "0":
+            break
+        else:
+            print("\nInvalid choice. Please enter a number from the menu.")
+
+
+def export_monthly_report_csv(data):
+    """
+    Exports a monthly income/expense/balance report to a CSV file.
+    """
+    month = prompt_for_month()
+
+    income_total = 0
+    expense_total = 0
+
+    for t in data["transactions"]:
+        if t["date"].startswith(month):
+            if t["type"] == "income":
+                income_total += t["amount"]
+            elif t["type"] == "expense":
+                expense_total += t["amount"]
+
+    balance = income_total - expense_total
+
+    os.makedirs("exports", exist_ok=True)
+    file_path = os.path.join("exports", f"monthly_report_{month}.csv")
+
+    with open(file_path, "w", newline="", encoding="utf-8") as file:
+        writer = csv.writer(file)
+        writer.writerow(["month", "total_income", "total_expenses", "balance"])
+        writer.writerow([month, income_total, expense_total, balance])
+
+    print(f"\nExported monthly report to {file_path}")
+
+
+def export_transactions_csv(data):
+    """
+    Exports all transactions to a CSV file in the exports folder.
+    """
+    os.makedirs("exports", exist_ok=True)
+    file_path = os.path.join("exports", "transactions.csv")
+
+    with open(file_path, "w", newline="", encoding="utf-8") as file:
+        writer = csv.writer(file)
+        writer.writerow(["id", "date", "type", "category", "amount", "note"])
+
+        for t in data["transactions"]:
+            writer.writerow([
+                t["id"],
+                t["date"],
+                t["type"],
+                t["category"],
+                t["amount"],
+                t["note"]
+            ])
+
+    print(f"\nExported transactions to {file_path}")
 
 
 def display_transactions_menu():
@@ -325,6 +415,8 @@ def main():
             budgets_flow(data)
         elif choice == "3":
             monthly_report(data)
+        elif choice == "4":
+            export_flow(data)
         elif choice == "0":
             print("Thank you for using Personal Budget Planner. Goodbye!\n")
             break
