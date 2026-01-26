@@ -8,6 +8,11 @@
 
 - The project is built using the Code Institute Python Essentials Template and is deployed to Heroku using a mock terminal interface.
 
+## Target Audience
+
+This application is intended for individuals who want a simple, text-based tool to track their personal finances. It is suitable for users who prefer a command-line interface and want to manage budgets without using spreadsheets or external financial applications.
+
+
 ## User Goals
 
 - Record income and expense transactions
@@ -81,7 +86,9 @@ The application runs in a loop until the user chooses to exit.
 
 ## Data Model
 
-Data is stored locally in a JSON file with the following structure:
+-JSON was chosen for data storage because it is lightweight, human-readable, and well-suited for small to medium datasets used in command-line applications.
+
+- Data is stored locally in a JSON file with the following structure:
 {
   "transactions": [
     {
@@ -132,16 +139,65 @@ Data is stored locally in a JSON file with the following structure:
 
 ## Testing
 
+- Manual testing was carried out during development to ensure the application behaves as expected.
+
+## Bugs and Fixes
+
+### Bug: Program would not run from root folder
+
+- **Issue**: Running `python run.py` from the outer project folder caused a file not found error.
+- **Fix**: Ensured the application is run from the inner project directory where `run.py` is located.
+
+### Bug: Invalid menu input caused unexpected behaviour
+
+- **Issue**: Users could enter non-numeric values at menus.
+- **Fix**: Added input validation and defensive checks in all menu handlers.
+
 ## Libraries and Technologies Used
+
+### Python Standard Library
+
+- [json](https://docs.python.org/3/library/json.html)
+   - Used for persistent storage of transactions and budgets.
+- [csv](https://docs.python.org/3/library/csv.html) 
+    - Used to export transaction data and reports.
+- [datetime](https://docs.python.org/3/library/datetime.html)
+   -  Used to validate date input.
+- [os](https://docs.python.org/3/library/os.html)
+   -  Used for file and folder handling.
+
+### External Libraries
+
+This project is based on the Code Institute Python Essentials Template, which includes:
+- [gspread](https://pypi.org/project/gspread/)
+- [google-auth](https://pypi.org/project/google-auth/)
+
+These libraries were retained for template compatibility but are not directly used in this project.
 
 ## Deployment
 
+The project is deployed to Heroku using the Code Institute Python Essentials Template.
+
+Deployment steps:
+
+1. Create a new Heroku app
+
+2. Set the buildpacks to Python and Node.js
+
+3. Connect the Heroku app to the GitHub repository
+
+4. Deploy the main branch
+
 ## Credits
 
+- Code Institute Python Essentials Template
+
+- Python documentation
+
 ## Acknowledgements
+
+This project was developed as Portfolio Project 3 for the Diploma in Full Stack Software Development at Code Institute.
 
 ## 
 
 ---
-
-Happy coding!
