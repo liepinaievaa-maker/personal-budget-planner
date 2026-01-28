@@ -288,8 +288,8 @@ def prompt_for_category():
 
 def prompt_for_limit():
     """
-    Prompts user for a positive budget limit and the persons input 
-    here should be positive only.
+    Prompts user for a positive budget limit and
+    the persons input here should be positive only.
     Returns float.
     """
     while True:
@@ -408,7 +408,7 @@ def main():
         print(f"\nLoaded {len(data['transactions'])} transactions.")
         display_main_menu()
         choice = get_user_choice()
-        
+
         if choice == "1":
             transactions_flow(data)
         elif choice == "2":

@@ -139,7 +139,27 @@ The application runs in a loop until the user chooses to exit.
 
 ## Testing
 
+### Manual testing
+
 - Manual testing was carried out during development to ensure the application behaves as expected.
+
+| Feature | Test Case | Expected Result | Outcome |
+| ------- | --------- | ---------------- | ------- |
+| Main Menu | Enter invalid input | Error message displayed | Pass |
+| Add Transaction | Enter valid data | Transaction saved to JSON | Pass |
+| Add Transaction | Enter invalid amount | Prompt user again | Pass |
+| View Transactions | No transactions exist | Message shown | Pass |
+| Monthly Report | Valid month entered | Correct totals shown | Pass |
+| Budgets | Set budget and compare | Remaining/overspent shown | Pass |
+| CSV Export | Export transactions | CSV file created | Pass |
+
+### Code Validation
+
+- The Python code was tested using the Code Institute PEP8 validator:
+[pep8ci](https://pep8ci.herokuapp.com/)
+
+- Minor formatting issues were identified, such as missing final newlines and inconsistent spacing.  
+- These issues were corrected to ensure the code conforms to PEP8 standards.
 
 ## Bugs and Fixes
 
