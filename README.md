@@ -86,7 +86,7 @@ The application runs in a loop until the user chooses to exit.
 
 ## Data Model
 
--JSON was chosen for data storage because it is lightweight, human-readable, and well-suited for small to medium datasets used in command-line applications.
+- JSON was chosen for data storage because it is lightweight, human-readable, and well-suited for small to medium datasets used in command-line applications.
 
 - Data is stored locally in a JSON file with the following structure:
 {
@@ -161,6 +161,8 @@ The application runs in a loop until the user chooses to exit.
 - Minor formatting issues were identified, such as missing final newlines and inconsistent spacing.  
 - These issues were corrected to ensure the code conforms to PEP8 standards.
 
+![pep8](documentation/pep8.PNG)
+
 ## Bugs and Fixes
 
 ### Bug: Program would not run from root folder
@@ -218,6 +220,6 @@ Deployment steps:
 
 This project was developed as Portfolio Project 3 for the Diploma in Full Stack Software Development at Code Institute.
 
-## 
+
 
 ---
