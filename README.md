@@ -8,6 +8,10 @@
 
 - The project is built using the Code Institute Python Essentials Template and is deployed to Heroku using a mock terminal interface.
 
+- [Here is a link to my deployment](https://personal-budget-planner-pbp-3271b8a37717.herokuapp.com/)
+
+![deployment](documentation/deployment2.PNG)
+
 ## Target Audience
 
 This application is intended for individuals who want a simple, text-based tool to track their personal finances. It is suitable for users who prefer a command-line interface and want to manage budgets without using spreadsheets or external financial applications.
@@ -89,6 +93,7 @@ The application runs in a loop until the user chooses to exit.
 - JSON was chosen for data storage because it is lightweight, human-readable, and well-suited for small to medium datasets used in command-line applications.
 
 - Data is stored locally in a JSON file with the following structure:
+
 {
   "transactions": [
     {
@@ -116,6 +121,8 @@ The application runs in a loop until the user chooses to exit.
     }
   ]
 }
+
+![deployment-structure](documentation/deployment1.PNG)
 
 ## Program Flow
 
