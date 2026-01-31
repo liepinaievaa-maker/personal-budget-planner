@@ -10,7 +10,7 @@
 
 - [Here is a link to my deployment](https://personal-budget-planner-pbp-3271b8a37717.herokuapp.com/)
 
-![deployment](documentation/deployment2.PNG)
+![mockup-on-devices](documentation/mockup-devices.png)
 
 ## Target Audience
 
@@ -123,6 +123,9 @@ The application runs in a loop until the user chooses to exit.
 }
 
 ![deployment-structure](documentation/deployment1.PNG)
+
+![deployment](documentation/deployment2.PNG)
+
 
 ## Program Flow
 
