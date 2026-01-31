@@ -4,6 +4,26 @@ from app.storage import load_data, save_data
 from datetime import datetime
 
 
+def show_intro():
+    # Displays the introductory text for the application.
+    intro_text = (
+        "Personal Budget Planner\n"
+        "----------------------\n"
+        "Purpose: Track your income and expenses, set monthly budgets,"
+        " and\n"
+        "view monthly reports.\n\n"
+        "How to use:\n"
+        "1) Transactions: add/view income and expenses\n"
+        "2) Budgets: set a monthly limit per category\n"
+        "3) Reports: view monthly totals\n"
+        "4) Export: save transactions/reports to CSV\n\n"
+        "Tip: You will see menu options next. Use 0 in menus to go\n"
+        "back or exit.\n"
+    )
+    print(intro_text)
+    input("Press Enter to continue...")
+
+
 def display_main_menu():
     """
     Displays the main menu options to the user.
@@ -402,6 +422,7 @@ def main():
     """
     Main application loop
     """
+    show_intro()
     data = load_data()
 
     while True:
