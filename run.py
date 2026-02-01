@@ -4,6 +4,10 @@ from app.storage import load_data, save_data
 from datetime import datetime
 
 
+MIN_YEAR = 2000
+MAX_YEAR = 3000
+
+
 def show_intro():
     # Displays the introductory text for the application.
     intro_text = (
@@ -47,12 +51,16 @@ def get_user_choice():
 def prompt_for_date():
     """
     Prompts user for a date in YYYY-MM-DD format and validates it.
+    Checks if the year is within the allowed range.
     Returns the date string.
     """
     while True:
         date_str = input("Enter date (YYYY-MM-DD): ").strip()
         try:
-            datetime.strptime(date_str, "%Y-%m-%d")
+            date_obj = datetime.strptime(date_str, "%Y-%m-%d")
+            if date_obj.year < MIN_YEAR or date_obj.year > MAX_YEAR:
+                print(f"Year must be between {MIN_YEAR} and {MAX_YEAR}.")
+                continue
             return date_str
         except ValueError:
             print("Invalid date format. Please use YYYY-MM-DD.")
@@ -149,7 +157,8 @@ def monthly_report(data):
     """
     Displays income, expenses, and balance for a given month.
     """
-    month = prompt_for_month()
+    date_str = prompt_for_date()
+    month = date_str[:7]
 
     income_total = 0
     expense_total = 0
