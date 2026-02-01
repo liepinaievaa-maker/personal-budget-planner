@@ -41,6 +41,16 @@ def display_main_menu():
     print("0. Exit")
 
 
+def confirm_action(message="Is this correct? (y/n): "):
+    while True:
+        answer = input(message).strip().lower()
+        if answer in ("y", "yes"):
+            return True
+        if answer in ("n", "no"):
+            return False
+        print("Please enter y or n.")
+
+
 def get_user_choice():
     """
     Gets the user's menu choice.
@@ -101,7 +111,7 @@ def add_transaction(data):
     Prompts the user for transaction details, appends a new transaction
     to the data dict, and saves it.
     """
-    print("\nAdd a Transaction")
+    print("Add a Transaction \n")
     print("-" * 18)
 
     date_str = prompt_for_date()
@@ -126,7 +136,17 @@ def add_transaction(data):
     data["transactions"].append(transaction)
     save_data(data)
 
-    print(f"\nSaved transaction #{next_id} ({t_type}) - {amount:.2f}")
+    print(f"\n Saved transaction #{next_id} ({t_type}) - {amount:.2f}")
+    print("\n Please confirm your transaction:")
+    print(f"Date: {date_str}")
+    print(f"Type: {t_type}")
+    print(f"Category: {category}")
+    print(f"Amount: {amount:.2f}")
+    print(f"Note: {note if note else '(none)'}")
+
+    if not confirm_action():
+        print("\nTransaction cancelled. Nothing was saved.\n")
+        return
 
 
 def view_transactions(data):
@@ -228,6 +248,16 @@ def set_budget(data):
         "category": category,
         "limit": limit
     })
+
+    print("\nPlease confirm your budget:")
+    print(f"Month: {month}")
+    print(f"Category: {category}")
+    print(f"Limit: {limit:.2f}")
+
+    if not confirm_action():
+        print("\nBudget cancelled. Nothing was saved.\n")
+        return
+
     save_data(data)
     print(f"Saved budget for {category} in {month}: {limit:.2f}\n")
 

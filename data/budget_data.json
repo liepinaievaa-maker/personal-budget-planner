@@ -23,6 +23,14 @@
       "category": "house",
       "amount": 12.0,
       "note": ""
+    },
+    {
+      "id": 4,
+      "date": "2023-03-18",
+      "type": "income",
+      "category": "food",
+      "amount": 12.6,
+      "note": "n"
     }
   ],
   "budgets": [
