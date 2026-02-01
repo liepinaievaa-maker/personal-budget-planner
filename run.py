@@ -120,6 +120,18 @@ def add_transaction(data):
     note = input("Note (optional): ").strip()
     amount = prompt_for_amount()
 
+
+    print("Please confirm your transaction:\n")
+    print(f"Date: {date_str}")
+    print(f"Type: {t_type}")
+    print(f"Category: {category}")
+    print(f"Amount: {amount:.2f}")
+    print(f"Note: {note if note else '(none)'}")
+
+    if not confirm_action():
+        print("Transaction cancelled. Nothing was saved.\n")
+        return
+
     next_id = 1
     if data["transactions"]:
         next_id = max(t["id"] for t in data["transactions"]) + 1
@@ -135,18 +147,7 @@ def add_transaction(data):
 
     data["transactions"].append(transaction)
     save_data(data)
-
-    print(f"\n Saved transaction #{next_id} ({t_type}) - {amount:.2f}")
-    print("\n Please confirm your transaction:")
-    print(f"Date: {date_str}")
-    print(f"Type: {t_type}")
-    print(f"Category: {category}")
-    print(f"Amount: {amount:.2f}")
-    print(f"Note: {note if note else '(none)'}")
-
-    if not confirm_action():
-        print("\nTransaction cancelled. Nothing was saved.\n")
-        return
+    print(f"Saved transaction #{next_id} ({t_type}) - {amount:.2f}\n")
 
 
 def view_transactions(data):
