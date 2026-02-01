@@ -6,6 +6,7 @@ from datetime import datetime
 
 MIN_YEAR = 2000
 MAX_YEAR = 3000
+MAX_BUDGET_LIMIT = 500000
 
 
 def show_intro():
@@ -372,6 +373,9 @@ def prompt_for_limit():
             limit = float(limit_str)
             if limit <= 0:
                 print("Limit must be greater than 0.")
+                continue
+            if limit > MAX_BUDGET_LIMIT:
+                print(f"Limit must be {MAX_BUDGET_LIMIT} or less.")
                 continue
             return limit
         except ValueError:
