@@ -153,15 +153,21 @@ def monthly_report(data):
 
     income_total = 0
     expense_total = 0
+    matches = 0
 
     for transaction in data["transactions"]:
         if transaction["date"].startswith(month):
+            matches += 1
             if transaction["type"] == "income":
                 income_total += transaction["amount"]
             elif transaction["type"] == "expense":
                 expense_total += transaction["amount"]
+    
+    if matches == 0:
+        print(f"No transactions found for {month}.\n")
+        return
 
-    print("\nMonthly Report for", month)
+    print("Monthly Report for", month)
     print("-" * 25)
     print("Total income:", income_total)
     print("Total expenses:", expense_total)
@@ -256,6 +262,10 @@ def view_budget_status(data):
             print(f"Remaining: {remaining:.2f}")
         else:
             print(f"Overspent by: {abs(remaining):.2f}")
+
+    if len(data["budgets"]) == 0:
+        print("No budgets have been created yet.\n")
+        return
 
 
 def budgets_flow(data):
