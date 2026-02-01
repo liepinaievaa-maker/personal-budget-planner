@@ -106,7 +106,7 @@ def add_transaction(data):
 
     date_str = prompt_for_date()
     t_type = prompt_for_type()
-    category = input("Category (e.g. Food, Rent): ").strip()
+    category = prompt_for_category()
     note = input("Note (optional): ").strip()
     amount = prompt_for_amount()
 
@@ -118,7 +118,7 @@ def add_transaction(data):
         "id": next_id,
         "date": date_str,
         "type": t_type,
-        "category": category if category else "Uncategorized",
+        "category": category,
         "amount": amount,
         "note": note
     }
@@ -320,9 +320,13 @@ def prompt_for_month():
 def prompt_for_category():
     """
     Prompts user for a category name.
+    Category cannot be empty.
     """
-    category = input("Enter category (e.g. Food): ").strip()
-    return category if category else "Uncategorized"
+    while True:
+        category = input("Enter category (e.g. Food): ").strip()
+        if category:
+            return category
+        print("Category cannot be empty. Please enter a category.")
 
 
 def prompt_for_limit():
