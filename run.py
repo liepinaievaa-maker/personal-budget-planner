@@ -120,7 +120,6 @@ def add_transaction(data):
     note = input("Note (optional): ").strip()
     amount = prompt_for_amount()
 
-
     print("Please confirm your transaction:\n")
     print(f"Date: {date_str}")
     print(f"Type: {t_type}")
@@ -192,7 +191,7 @@ def monthly_report(data):
                 income_total += transaction["amount"]
             elif transaction["type"] == "expense":
                 expense_total += transaction["amount"]
-    
+
     if matches == 0:
         print(f"No transactions found for {month}.\n")
         return
@@ -244,20 +243,20 @@ def set_budget(data):
             print(f"Updated budget for {category} in {month} to {limit:.2f}\n")
             return
 
-    data["budgets"].append({
-        "month": month,
-        "category": category,
-        "limit": limit
-    })
-
-    print("\nPlease confirm your budget:")
+    print("\n Please confirm your budget:")
     print(f"Month: {month}")
     print(f"Category: {category}")
     print(f"Limit: {limit:.2f}")
 
     if not confirm_action():
-        print("\nBudget cancelled. Nothing was saved.\n")
+        print("Budget cancelled. Nothing was saved.\n")
         return
+
+    data["budgets"].append({
+        "month": month,
+        "category": category,
+        "limit": limit
+    })
 
     save_data(data)
     print(f"Saved budget for {category} in {month}: {limit:.2f}\n")
