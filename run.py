@@ -33,13 +33,16 @@ def display_main_menu():
     """
     Displays the main menu options to the user.
     """
-    print("\nPersonal Budget Planner")
-    print("-" * 25)
-    print("1. Transactions")
-    print("2. Budgets")
-    print("3. Reports")
-    print("4. Export")
-    print("0. Exit")
+menu_text = (
+        "Personal Budget Planner\n"
+        "-------------------------\n"
+        "1. Transactions\n"
+        "2. Budgets\n"
+        "3. Reports\n"
+        "4. Export\n"
+        "0. Exit\n"
+    )
+print(menu_text)
 
 
 def confirm_action(message="Is this correct? (y/n): "):
