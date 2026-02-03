@@ -1,8 +1,9 @@
 import csv
 import os
-from app.storage import load_data, save_data
+from app.storage_sheets import load_data, append_transaction
 from datetime import datetime
-
+from app.storage_sheets import update_budget
+from app.storage_sheets import append_budget
 
 MIN_YEAR = 2000
 MAX_YEAR = 3000
@@ -30,10 +31,8 @@ def show_intro():
 
 
 def display_main_menu():
-    """
-    Displays the main menu options to the user.
-    """
-menu_text = (
+    # Displays the main menu options to the user.
+    menu_text = (
         "Personal Budget Planner\n"
         "-------------------------\n"
         "1. Transactions\n"
@@ -42,7 +41,7 @@ menu_text = (
         "4. Export\n"
         "0. Exit\n"
     )
-print(menu_text)
+    print(menu_text)
 
 
 def confirm_action(message="Is this correct? (y/n): "):
@@ -56,9 +55,7 @@ def confirm_action(message="Is this correct? (y/n): "):
 
 
 def get_user_choice():
-    """
-    Gets the user's menu choice.
-    """
+    # Gets the user's menu choice.
     return input("Please choose an option: ").strip()
 
 
@@ -112,28 +109,20 @@ def prompt_for_type():
 
 def add_transaction(data):
     """
-    Prompts the user for transaction details, appends a new transaction
-    to the data dict, and saves it.
+    Prompts the user for transaction details and saves it to Google Sheets
+    after confirmation.
     """
     print("Add a Transaction \n")
     print("-" * 18)
 
     date_str = prompt_for_date()
     t_type = prompt_for_type()
-    category = prompt_for_category()
+    if t_type == "income":
+        category = "Income"
+    else:
+        category = prompt_for_category
     note = input("Note (optional): ").strip()
     amount = prompt_for_amount()
-
-    print("Please confirm your transaction:\n")
-    print(f"Date: {date_str}")
-    print(f"Type: {t_type}")
-    print(f"Category: {category}")
-    print(f"Amount: {amount:.2f}")
-    print(f"Note: {note if note else '(none)'}")
-
-    if not confirm_action():
-        print("Transaction cancelled. Nothing was saved.\n")
-        return
 
     next_id = 1
     if data["transactions"]:
@@ -148,15 +137,24 @@ def add_transaction(data):
         "note": note
     }
 
+    print("Please confirm your transaction:\n")
+    print(f"Date: {date_str}")
+    print(f"Type: {t_type}")
+    print(f"Category: {category}")
+    print(f"Amount: {amount:.2f}")
+    print(f"Note: {note if note else '(none)'}")
+
+    if not confirm_action():
+        print("Transaction cancelled. Nothing was saved.\n")
+        return
+
+    append_transaction(transaction)
     data["transactions"].append(transaction)
-    save_data(data)
-    print(f"Saved transaction #{next_id} ({t_type}) - {amount:.2f}\n")
+    print("\nTransaction saved.\n")
 
 
 def view_transactions(data):
-    """
-    Displays all transactions in a readable format.
-    """
+    # Displays all transactions in a readable format.
     transactions = data["transactions"]
 
     if len(transactions) == 0:
@@ -178,9 +176,7 @@ def view_transactions(data):
 
 
 def monthly_report(data):
-    """
-    Displays income, expenses, and balance for a given month.
-    """
+    # Displays income, expenses, and balance for a given month.
     date_str = prompt_for_date()
     month = date_str[:7]
 
@@ -208,9 +204,7 @@ def monthly_report(data):
 
 
 def transactions_flow(data):
-    """
-    Handles the transactions submenu loop.
-    """
+    # Handles the transactions submenu loop.
     while True:
         display_transactions_menu()
         choice = get_user_choice()
@@ -239,11 +233,14 @@ def set_budget(data):
     limit = prompt_for_limit()
 
     for budget in data["budgets"]:
-        if (budget["month"] == month and budget["category"].lower()
-                == category.lower()):
+        if (
+            budget["month"] == month
+            and budget["category"].lower() == category.lower()
+        ):
             budget["category"] = category
             budget["limit"] = limit
-            save_data(data)
+
+            update_budget(month, category, limit)
             print(f"Updated budget for {category} in {month} to {limit:.2f}\n")
             return
 
@@ -256,13 +253,15 @@ def set_budget(data):
         print("Budget cancelled. Nothing was saved.\n")
         return
 
-    data["budgets"].append({
+    new_budget = {
         "month": month,
         "category": category,
         "limit": limit
-    })
+        }
 
-    save_data(data)
+    append_budget(new_budget)
+    data["budgets"].append(new_budget)
+
     print(f"Saved budget for {category} in {month}: {limit:.2f}\n")
 
 
@@ -312,9 +311,7 @@ def view_budget_status(data):
 
 
 def budgets_flow(data):
-    """
-    Handles the budgets submenu loop.
-    """
+    # Handles the budgets submenu loop.
     while True:
         display_budgets_menu()
         choice = get_user_choice()
@@ -330,9 +327,7 @@ def budgets_flow(data):
 
 
 def display_budgets_menu():
-    """
-    Displays the budgets submenu options.
-    """
+    # Displays the budgets submenu options.
     print("Budgets\n")
     print("-" * 7)
     print("1. Set monthly budget")
@@ -341,9 +336,7 @@ def display_budgets_menu():
 
 
 def prompt_for_month():
-    """
-    Prompts user for a month in YYYY-MM format.
-    """
+    # Prompts user for a month in YYYY-MM format.
     while True:
         month = input("Enter month (YYYY-MM): ").strip()
         if len(month) == 7 and month[4] == "-":
@@ -386,9 +379,7 @@ def prompt_for_limit():
 
 
 def display_export_menu():
-    """
-    Displays export submenu options.
-    """
+    # Displays export submenu options.
     print("\nExport")
     print("-" * 6)
     print("1. Export all transactions (CSV)")
@@ -397,9 +388,7 @@ def display_export_menu():
 
 
 def export_flow(data):
-    """
-    Handles the export submenu loop.
-    """
+    # Handles the export submenu loop.
     while True:
         display_export_menu()
         choice = get_user_choice()
@@ -415,9 +404,7 @@ def export_flow(data):
 
 
 def export_monthly_report_csv(data):
-    """
-    Exports a monthly income/expense/balance report to a CSV file.
-    """
+    # Exports a monthly income/expense/balance report to a CSV file.
     month = prompt_for_month()
 
     income_total = 0
@@ -445,7 +432,8 @@ def export_monthly_report_csv(data):
 
 def export_transactions_csv(data):
     """
-    Exports all transactions to a CSV file in the exports folder.
+    Exports all transactions to
+    a CSV file in the exports folder.
     """
     os.makedirs("exports", exist_ok=True)
     file_path = os.path.join("exports", "transactions.csv")
@@ -468,9 +456,7 @@ def export_transactions_csv(data):
 
 
 def display_transactions_menu():
-    """
-    Displays the transactions submenu options.
-    """
+    #  Displays the transactions submenu options.
     print("\nTransactions")
     print("-" * 12)
     print("1. Add transaction")
@@ -479,9 +465,7 @@ def display_transactions_menu():
 
 
 def main():
-    """
-    Main application loop
-    """
+    # Main application loop.
     show_intro()
     data = load_data()
 
