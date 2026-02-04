@@ -189,7 +189,7 @@ def monthly_report(data):
     Displays income, expenses, and balance for a given month
     as a table.
     """
-    month = prompt_for_month()
+    month = prompt_for_month_or_date()
 
     income_total = 0
     expense_total = 0
@@ -206,7 +206,7 @@ def monthly_report(data):
     if matches == 0:
         print(f"No transactions found for {month}.\n")
         return
-    
+
     balance = income_total - expense_total
 
     rows = [[
@@ -248,7 +248,7 @@ def set_budget(data):
     print("Set Monthly Budget\n")
     print("-" * 18)
 
-    month = prompt_for_month()
+    month = prompt_for_month_or_date()
     category = prompt_for_category()
     limit = prompt_for_limit()
 
@@ -297,7 +297,7 @@ def view_budget_status(data):
     Shows budget usage for a given month by category.
     And calculate it by the month.
     """
-    month = prompt_for_month()
+    month = prompt_for_month_or_date()
 
     # Sum up the expenses by category for the month
     spending_by_category = {}
@@ -364,13 +364,20 @@ def display_budgets_menu():
     print("0. Back to main menu")
 
 
-def prompt_for_month():
-    # Prompts user for a month in YYYY-MM format.
+def prompt_for_month_or_date():
+    """
+    Accepts either YYYY-MM or YYYY-MM-DD.
+    Returns YYYY-MM.
+    """
     while True:
-        month = input("Enter month (YYYY-MM): ").strip()
-        if len(month) == 7 and month[4] == "-":
-            return month
-        print("Invalid format. Please use YYYY-MM.")
+        s = input("Enter month (YYYY-MM) or date (YYYY-MM-DD): ").strip()
+        if len(s) == 7 and s[4] == "-":
+            return s
+        try:
+            dt = datetime.strptime(s, "%Y-%m-%d")
+            return dt.strftime("%Y-%m")
+        except ValueError:
+            print("Invalid format. Use YYYY-MM or YYYY-MM-DD.")
 
 
 def prompt_for_category():
@@ -434,7 +441,7 @@ def export_flow(data):
 
 def export_monthly_report_csv(data):
     # Exports a monthly income/expense/balance report to a CSV file.
-    month = prompt_for_month()
+    month = prompt_for_month_or_date()
 
     income_total = 0
     expense_total = 0
