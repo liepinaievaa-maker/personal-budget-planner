@@ -122,9 +122,10 @@ def add_transaction(data):
     date_str = prompt_for_date()
     t_type = prompt_for_type()
     if t_type == "income":
-        category = "Income"
+        print("\nIncome category examples: Salary, Bonus, Gift")
     else:
-        category = prompt_for_category()
+        print("\nExpense category examples: Food, Transport, Rent")
+    category = prompt_for_category()
     note = input("Note (optional): ").strip()
     amount = prompt_for_amount()
 
@@ -161,29 +162,26 @@ def view_transactions(data):
     # Displays all transactions in a readable format.
     transactions = data["transactions"]
 
-    if not transactions:
-        print("No transactions yet.\n")
+    if len(transactions) == 0:
+        print("\nNo transactions yet.\n")
+        pause()
         return
 
-    headers = ["ID", "Date", "Type", "Category", "Amount", "Note"]
-
-    table = [
-        [
+    rows = []
+    for t in transactions:
+        rows.append([
             t["id"],
             t["date"],
             t["type"],
             t["category"],
-            f"{t['amount']:.2f}",
-            t["note"],
-        ]
-        for t in transactions
-    ]
+            f'{float(t["amount"]):.2f}',
+            t["note"] or ""
+        ])
 
-    print("All Transactions:\n")
-    print(tabulate(table, headers=headers, tablefmt="grid"))
-
-    def pause():
-        input("Press Enter to continue...\n")
+    print("\nAll Transactions\n")
+    headers = ["ID", "Date", "Type", "Category", "Amount", "Note"]
+    print(tabulate(rows, headers=headers, tablefmt="grid"))
+    pause()
 
 
 def monthly_report(data):
@@ -212,9 +210,6 @@ def monthly_report(data):
     print("Total income:", income_total)
     print("Total expenses:", expense_total)
     print("Balance:", income_total - expense_total)
-
-    def pause():
-        input("\nPress Enter to continue...")
 
 
 def transactions_flow(data):
@@ -283,6 +278,8 @@ def set_budget(data):
 
     print(f"Saved budget for {category} in {month}: {limit:.2f}\n")
 
+    pause()
+
 
 def view_budget_status(data):
     """
@@ -328,9 +325,6 @@ def view_budget_status(data):
         print("No budgets have been created yet.\n")
         return
 
-    def pause():
-        input("Press Enter to continue...\n")
-
 
 def budgets_flow(data):
     # Handles the budgets submenu loop.
@@ -374,7 +368,7 @@ def prompt_for_category():
     while True:
         category = input("Enter category (e.g. Food): ").strip()
         if category:
-            return category
+            return category.strip().title()
         print("Category cannot be empty. Please enter a category.")
 
 
@@ -449,10 +443,9 @@ def export_monthly_report_csv(data):
         writer.writerow(["month", "total_income", "total_expenses", "balance"])
         writer.writerow([month, income_total, expense_total, balance])
 
-    print(f"\nExported monthly report to {file_path}")
+    print(f"Exported monthly report to {file_path}\n")
 
-    def pause():
-        input("Press Enter to continue...\n")
+    pause()
 
 
 def export_transactions_csv(data):
@@ -479,8 +472,7 @@ def export_transactions_csv(data):
 
     print(f"Exported transactions to {file_path}\n")
 
-    def pause():
-        input("\nPress Enter to continue...")
+    pause()
 
 
 def display_transactions_menu():
