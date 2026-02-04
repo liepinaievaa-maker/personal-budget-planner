@@ -2,6 +2,8 @@ import csv
 import os
 from app.storage_sheets import load_data, append_transaction, append_budget
 from datetime import datetime
+from tabulate import tabulate
+
 
 MIN_YEAR = 2000
 MAX_YEAR = 3000
@@ -155,22 +157,26 @@ def view_transactions(data):
     # Displays all transactions in a readable format.
     transactions = data["transactions"]
 
-    if len(transactions) == 0:
+    if not transactions:
         print("No transactions yet.\n")
         return
 
-    print("All Transactions\n")
-    print("-" * 17)
+    headers = ["ID", "Date", "Type", "Category", "Amount", "Note"]
 
-    for transaction in transactions:
-        print(
-            "ID:", transaction["id"],
-            "| Date:", transaction["date"],
-            "| Type:", transaction["type"],
-            "| Category:", transaction["category"],
-            "| Amount:", transaction["amount"],
-            "| Note:", transaction["note"]
-        )
+    table = [
+        [
+            t["id"],
+            t["date"],
+            t["type"],
+            t["category"],
+            f"{t['amount']:.2f}",
+            t["note"],
+        ]
+        for t in transactions
+    ]
+
+    print("All Transactions:\n")
+    print(tabulate(table, headers=headers, tablefmt="grid"))
 
 
 def monthly_report(data):
