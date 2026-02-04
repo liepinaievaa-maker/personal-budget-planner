@@ -10,6 +10,10 @@ MAX_YEAR = 3000
 MAX_BUDGET_LIMIT = 500000
 
 
+def pause():
+    input("Press Enter to continue...\n")
+
+
 def show_intro():
     # Displays the introductory text for the application.
     intro_text = (
@@ -178,6 +182,9 @@ def view_transactions(data):
     print("All Transactions:\n")
     print(tabulate(table, headers=headers, tablefmt="grid"))
 
+    def pause():
+        input("Press Enter to continue...\n")
+
 
 def monthly_report(data):
     # Displays income, expenses, and balance for a given month.
@@ -205,6 +212,9 @@ def monthly_report(data):
     print("Total income:", income_total)
     print("Total expenses:", expense_total)
     print("Balance:", income_total - expense_total)
+
+    def pause():
+        input("\nPress Enter to continue...")
 
 
 def transactions_flow(data):
@@ -317,6 +327,9 @@ def view_budget_status(data):
     if len(data["budgets"]) == 0:
         print("No budgets have been created yet.\n")
         return
+
+    def pause():
+        input("Press Enter to continue...\n")
 
 
 def budgets_flow(data):
@@ -438,6 +451,9 @@ def export_monthly_report_csv(data):
 
     print(f"\nExported monthly report to {file_path}")
 
+    def pause():
+        input("Press Enter to continue...\n")
+
 
 def export_transactions_csv(data):
     """
@@ -461,7 +477,10 @@ def export_transactions_csv(data):
                 t["note"]
             ])
 
-    print(f"\nExported transactions to {file_path}")
+    print(f"Exported transactions to {file_path}\n")
+
+    def pause():
+        input("\nPress Enter to continue...")
 
 
 def display_transactions_menu():
