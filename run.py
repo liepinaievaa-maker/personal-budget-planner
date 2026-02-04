@@ -1,9 +1,7 @@
 import csv
 import os
-from app.storage_sheets import load_data, append_transaction
+from app.storage_sheets import load_data, append_transaction, append_budget
 from datetime import datetime
-from app.storage_sheets import update_budget
-from app.storage_sheets import append_budget
 
 MIN_YEAR = 2000
 MAX_YEAR = 3000
@@ -120,7 +118,7 @@ def add_transaction(data):
     if t_type == "income":
         category = "Income"
     else:
-        category = prompt_for_category
+        category = prompt_for_category()
     note = input("Note (optional): ").strip()
     amount = prompt_for_amount()
 
@@ -240,7 +238,12 @@ def set_budget(data):
             budget["category"] = category
             budget["limit"] = limit
 
-            update_budget(month, category, limit)
+            budget_data = {
+                "month": month,
+                "category": category,
+                "limit": limit
+            }
+            append_budget(budget_data)
             print(f"Updated budget for {category} in {month} to {limit:.2f}\n")
             return
 

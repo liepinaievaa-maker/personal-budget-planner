@@ -58,3 +58,18 @@ def upsert_budget(budget):
         budget["category"],
         budget["limit"],
     ])
+
+
+def append_budget(budget):
+    """
+    Appends one budget row to the 'budgets' worksheet.
+    Expected columns: month, category, limit
+    """
+    sheet = open_sheet()
+    worksheet = sheet.worksheet("budgets")
+
+    worksheet.append_row([
+        budget["month"],
+        budget["category"],
+        budget["limit"],
+    ])
