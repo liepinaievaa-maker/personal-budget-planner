@@ -288,13 +288,13 @@ def view_budget_status(data):
     """
     month = prompt_for_month()
 
+    # Sum up the expenses by category for the month
     spending_by_category = {}
-
     for t in data["transactions"]:
         if t["date"].startswith(month) and t["type"] == "expense":
             cat = t["category"]
             spending_by_category[cat] = (
-                spending_by_category.get(cat, 0) + t["amount"]
+                spending_by_category.get(cat, 0) + float(t["amount"])
             )
 
     budgets_for_month = [b for b in data["budgets"] if b["month"] == month]
@@ -303,27 +303,29 @@ def view_budget_status(data):
     print("-" * 22)
 
     if len(budgets_for_month) == 0:
-        print("No budgets set for this month.")
+        print("No budgets set for this month.\n")
+        pause()
         return
 
+    rows = []
     for b in budgets_for_month:
         cat = b["category"]
         limit = b["limit"]
         spent = spending_by_category.get(cat, 0)
         remaining = limit - spent
+        status = "OK" if remaining >= 0 else "OVER"
 
-        print(f"\nCategory: {cat}")
-        print(f"Limit: {limit:.2f}")
-        print(f"Spent: {spent:.2f}")
+        rows.append([
+            cat,
+            f"{limit:.2f}",
+            f"{spent:.2f}",
+            f"{remaining:.2f}",
+            status
+        ])
 
-        if remaining >= 0:
-            print(f"Remaining: {remaining:.2f}")
-        else:
-            print(f"Overspent by: {abs(remaining):.2f}")
-
-    if len(data["budgets"]) == 0:
-        print("No budgets have been created yet.\n")
-        return
+    headers = ["Category", "Limit", "Spent", "Remaining", "Status"]
+    print(tabulate(rows, headers=headers, tablefmt="grid"))
+    pause()
 
 
 def budgets_flow(data):
