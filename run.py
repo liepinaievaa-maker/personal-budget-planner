@@ -185,31 +185,42 @@ def view_transactions(data):
 
 
 def monthly_report(data):
-    # Displays income, expenses, and balance for a given month.
-    date_str = prompt_for_date()
-    month = date_str[:7]
+    """
+    Displays income, expenses, and balance for a given month
+    as a table.
+    """
+    month = prompt_for_month()
 
     income_total = 0
     expense_total = 0
     matches = 0
 
-    for transaction in data["transactions"]:
-        if transaction["date"].startswith(month):
+    for t in data["transactions"]:
+        if t["date"].startswith(month):
             matches += 1
-            if transaction["type"] == "income":
-                income_total += transaction["amount"]
-            elif transaction["type"] == "expense":
-                expense_total += transaction["amount"]
+            if t["type"] == "income":
+                income_total += float(t["amount"])
+            elif t["type"] == "expense":
+                expense_total += float(t["amount"])
 
     if matches == 0:
         print(f"No transactions found for {month}.\n")
         return
+    
+    balance = income_total - expense_total
 
-    print("Monthly Report for", month)
-    print("-" * 25)
-    print("Total income:", income_total)
-    print("Total expenses:", expense_total)
-    print("Balance:", income_total - expense_total)
+    rows = [[
+        month,
+        f"{income_total:.2f}",
+        f"{expense_total:.2f}",
+        f"{balance:.2f}"
+    ]]
+
+    headers = ["Month", "Total Income", "Total Expenses", "Balance"]
+
+    print(f"Monthly Report for {month}\n")
+    print(tabulate(rows, headers=headers, tablefmt="grid"))
+    pause()
 
 
 def transactions_flow(data):
