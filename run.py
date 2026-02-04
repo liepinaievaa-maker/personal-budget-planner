@@ -163,22 +163,36 @@ def view_transactions(data):
     transactions = data["transactions"]
 
     if len(transactions) == 0:
-        print("\nNo transactions yet.\n")
+        print("No transactions yet.\n")
         pause()
         return
 
     rows = []
+    income_total = 0.0
+    expense_total = 0.0
+
     for t in transactions:
+        amount = float(t["amount"])
+        if t["type"] == "income":
+            income_total += amount
+        elif t["type"] == "expense":
+            expense_total += amount
+
         rows.append([
             t["id"],
             t["date"],
             t["type"],
             t["category"],
-            f'{float(t["amount"]):.2f}',
+            f"{amount:.2f}",
             t["note"] or ""
         ])
+    
+    net_total = income_total - expense_total
+    rows.append(["", "", "", "TOTAL INCOME", f"{income_total:.2f}", ""])
+    rows.append(["", "", "", "TOTAL EXPENSE", f"{expense_total:.2f}", ""])
+    rows.append(["", "", "", "NET", f"{net_total:.2f}", ""])
 
-    print("\nAll Transactions\n")
+    print("All Transactions\n")
     headers = ["ID", "Date", "Type", "Category", "Amount", "Note"]
     print(tabulate(rows, headers=headers, tablefmt="grid"))
     pause()
