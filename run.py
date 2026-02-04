@@ -186,7 +186,7 @@ def view_transactions(data):
             f"{amount:.2f}",
             t["note"] or ""
         ])
-    
+
     net_total = income_total - expense_total
     rows.append(["", "", "", "TOTAL INCOME", f"{income_total:.2f}", ""])
     rows.append(["", "", "", "TOTAL EXPENSE", f"{expense_total:.2f}", ""])
