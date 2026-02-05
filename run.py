@@ -216,32 +216,56 @@ def monthly_report(data):
     income_total = 0
     expense_total = 0
     matches = 0
+    expense_by_category = {}
 
     for t in data["transactions"]:
         if t["date"].startswith(month):
             matches += 1
+            amount = float(t["amount"])
+
             if t["type"] == "income":
-                income_total += float(t["amount"])
+                income_total += amount
             elif t["type"] == "expense":
-                expense_total += float(t["amount"])
+                expense_total += amount
+                cat = t["category"]
+                expense_by_category[cat] = (
+                    expense_by_category.get(cat, 0.0) + amount)
 
     if matches == 0:
         print(f"No transactions found for {month}.\n")
+        pause()
         return
 
     balance = income_total - expense_total
 
-    rows = [[
+    print(f"Monthly Report for {month}:\n")
+
+    summary_rows = [[
         month,
         f"{income_total:.2f}",
         f"{expense_total:.2f}",
         f"{balance:.2f}"
     ]]
+    summary_headers = ["Month", "Total Income", "Total Expenses", "Balance"]
+    print(tabulate(summary_rows, headers=summary_headers, tablefmt="grid"))
 
-    headers = ["Month", "Total Income", "Total Expenses", "Balance"]
+    if not expense_by_category:
+        print("No expenses to break down for this month.\n")
+        pause()
+        return
 
-    print(f"Monthly Report for {month}\n")
-    print(tabulate(rows, headers=headers, tablefmt="grid"))
+    breakdown_rows = []
+    for cat, total in expense_by_category.items():
+        breakdown_rows.append([cat, f"{total:.2f}"])
+
+    breakdown_rows.sort(key=lambda r: r[1], reverse=True)
+
+    print("Expenses by Category\n")
+    print(tabulate(
+        breakdown_rows,
+        headers=["Category", "Total"],
+        tablefmt="grid"
+    ))
     pause()
 
 
