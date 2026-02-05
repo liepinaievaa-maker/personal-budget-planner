@@ -357,6 +357,7 @@ def view_budget_status(data):
         ])
 
     headers = ["Category", "Limit", "Spent", "Remaining", "Status"]
+    rows.sort(key=lambda r: r[0])
     print(tabulate(rows, headers=headers, tablefmt="grid"))
     pause()
 
