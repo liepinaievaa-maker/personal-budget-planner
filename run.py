@@ -206,6 +206,56 @@ def view_transactions(data):
     pause()
 
 
+def view_transactions_by_month(data):
+    month = prompt_for_month_or_date()
+    transactions = [
+        t for t in data["transactions"]
+        if t["date"].startswith(month)
+    ]
+
+    if not transactions:
+        print(f"\nNo transactions found for {month}.\n")
+        pause()
+        return
+
+    rows = []
+    income_total = 0.0
+    expense_total = 0.0
+
+    sorted_transactions = sorted(
+        transactions,
+        key=lambda t: t["date"],
+        reverse=True
+    )
+
+    for t in sorted_transactions:
+        amount = float(t["amount"])
+        if t["type"] == "income":
+            income_total += amount
+        elif t["type"] == "expense":
+            expense_total += amount
+
+        rows.append([
+            t["id"],
+            t["date"],
+            t["type"],
+            t["category"],
+            f"{amount:.2f}",
+            t["note"] or ""
+        ])
+
+    net_total = income_total - expense_total
+    rows.append(["", "", "", "", "", ""])
+    rows.append(["", "", "", "TOTAL INCOME", f"{income_total:.2f}", ""])
+    rows.append(["", "", "", "TOTAL EXPENSE", f"{expense_total:.2f}", ""])
+    rows.append(["", "", "", "NET", f"{net_total:.2f}", ""])
+
+    print(f"\nTransactions for {month}\n")
+    headers = ["ID", "Date", "Type", "Category", "Amount", "Note"]
+    print(tabulate(rows, headers=headers, tablefmt="grid"))
+    pause()
+
+
 def monthly_report(data):
     """
     Displays income, expenses, and balance for a given month
@@ -258,7 +308,7 @@ def monthly_report(data):
     for cat, total in expense_by_category.items():
         breakdown_rows.append([cat, f"{total:.2f}"])
 
-    breakdown_rows.sort(key=lambda r: r[1], reverse=True)
+    breakdown_rows.sort(key=lambda r: float(r[1]), reverse=True)
 
     print("Expenses by Category\n")
     print(tabulate(
@@ -279,6 +329,8 @@ def transactions_flow(data):
             add_transaction(data)
         elif choice == "2":
             view_transactions(data)
+        elif choice == "3":
+            view_transactions_by_month(data)
         elif choice == "0":
             break
         else:
@@ -495,10 +547,12 @@ def export_monthly_report_csv(data):
 
     for t in data["transactions"]:
         if t["date"].startswith(month):
+            amount = float(t["amount"])
+
             if t["type"] == "income":
-                income_total += t["amount"]
+                income_total += amount
             elif t["type"] == "expense":
-                expense_total += t["amount"]
+                expense_total += amount
 
     balance = income_total - expense_total
 
@@ -547,7 +601,8 @@ def display_transactions_menu():
     print("\nTransactions")
     print("-" * 12)
     print("1. Add transaction")
-    print("2. View transactions")
+    print("2. View all transactions")
+    print("3. View transactions by month")
     print("0. Back to main menu")
 
 
