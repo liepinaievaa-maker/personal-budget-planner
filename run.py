@@ -168,8 +168,8 @@ def view_transactions(data):
         return
 
     rows = []
-    income_total = 0.0
-    expense_total = 0.0
+    income_total = 0
+    expense_total = 0
 
     sorted_transactions = sorted(
         transactions,
@@ -179,6 +179,7 @@ def view_transactions(data):
 
     for t in sorted_transactions:
         amount = float(t["amount"])
+
         if t["type"] == "income":
             income_total += amount
         elif t["type"] == "expense":
@@ -194,6 +195,7 @@ def view_transactions(data):
         ])
 
     net_total = income_total - expense_total
+    rows.append(["", "", "", "", "", ""])
     rows.append(["", "", "", "TOTAL INCOME", f"{income_total:.2f}", ""])
     rows.append(["", "", "", "TOTAL EXPENSE", f"{expense_total:.2f}", ""])
     rows.append(["", "", "", "NET", f"{net_total:.2f}", ""])
