@@ -171,7 +171,13 @@ def view_transactions(data):
     income_total = 0.0
     expense_total = 0.0
 
-    for t in transactions:
+    sorted_transactions = sorted(
+        transactions,
+        key=lambda t: t["date"],
+        reverse=True
+        )
+
+    for t in sorted_transactions:
         amount = float(t["amount"])
         if t["type"] == "income":
             income_total += amount
