@@ -35,29 +35,34 @@ def append_transaction(transaction):
     ])
 
 
-def upsert_budget(budget):
-    # Updates a budget if month+category exists, otherwise appends new row.
+def upsert_budget(month: str, category: str, limit: float) -> bool:
+    """
+    Update budget if (month, category) exists, otherwise append.
+    Returns True if updated, False if appended.
+    """
     sheet = open_sheet()
     ws = sheet.worksheet("budgets")
 
-    records = ws.get_all_records()
+    month = month.strip()
+    category_norm = category.strip().lower()
 
-    for idx, row in enumerate(records, start=2):
-        same_month = str(row.get("month", "")).strip() == budget["month"]
-        same_cat = (
-            str(row.get("category", "")).strip().lower()
-            == budget["category"].lower()
-        )
+    rows = ws.get_all_values()
 
-        if same_month and same_cat:
-            ws.update(f"C{idx}", [[budget["limit"]]])
-            return
+    if not rows:
+        ws.append_row(["month", "category", "limit"])
+        ws.append_row([month, category.strip(), str(limit)])
+        return False
 
-    ws.append_row([
-        budget["month"],
-        budget["category"],
-        budget["limit"],
-    ])
+    for i, row in enumerate(rows[1:], start=2):
+        row_month = (row[0].strip() if len(row) > 0 else "")
+        row_cat = (row[1].strip().lower() if len(row) > 1 else "")
+
+        if row_month == month and row_cat == category_norm:
+            ws.update_cell(i, 3, str(limit))
+            return True
+
+    ws.append_row([month, category.strip(), str(limit)])
+    return False
 
 
 def append_budget(budget):

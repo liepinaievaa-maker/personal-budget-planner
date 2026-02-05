@@ -1,6 +1,6 @@
 import csv
 import os
-from app.storage_sheets import load_data, append_transaction, append_budget
+from app.storage_sheets import load_data, append_transaction, upsert_budget
 from datetime import datetime
 from tabulate import tabulate
 
@@ -350,23 +350,6 @@ def set_budget(data):
     category = prompt_for_category()
     limit = prompt_for_limit()
 
-    for budget in data["budgets"]:
-        if (
-            budget["month"] == month
-            and budget["category"].lower() == category.lower()
-        ):
-            budget["category"] = category
-            budget["limit"] = limit
-
-            budget_data = {
-                "month": month,
-                "category": category,
-                "limit": limit
-            }
-            append_budget(budget_data)
-            print(f"Updated budget for {category} in {month} to {limit:.2f}\n")
-            return
-
     print("\n Please confirm your budget:")
     print(f"Month: {month}")
     print(f"Category: {category}")
@@ -374,18 +357,31 @@ def set_budget(data):
 
     if not confirm_action():
         print("Budget cancelled. Nothing was saved.\n")
+        pause()
         return
 
-    new_budget = {
-        "month": month,
-        "category": category,
-        "limit": limit
-        }
+    updated = upsert_budget(month, category, limit)
 
-    append_budget(new_budget)
-    data["budgets"].append(new_budget)
+    found = False
+    for b in data["budgets"]:
+        if (b["month"] == month and
+                b["category"].lower() == category.strip().lower()):
+            b["category"] = category
+            b["limit"] = limit
+            found = True
+            break
 
-    print(f"Saved budget for {category} in {month}: {limit:.2f}\n")
+    if not found:
+        data["budgets"].append({
+            "month": month,
+            "category": category,
+            "limit": limit
+        })
+
+    if updated:
+        print(f"\nUpdated budget for {category} in {month} to {limit:.2f}\n")
+    else:
+        print(f"\nSaved budget for {category} in {month}: {limit:.2f}\n")
 
     pause()
 
