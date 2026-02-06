@@ -10,7 +10,7 @@
 
 - [Here is a link to my deployment](https://personal-budget-planner-pbp-3271b8a37717.herokuapp.com/)
 
-![mockup-on-devices](documentation/mockup-devices.png)
+![mockup-on-devices](documentation/mockup-devices-1.png)
 
 ## Target Audience
 
@@ -66,7 +66,7 @@ The application runs in a loop until the user chooses to exit.
 
 - View all saved transactions
 
-- Transactions are stored persistently in a JSON file
+- Transactions are stored persistently in Google Sheets
 
 ### Monthly Reports
 
@@ -90,54 +90,43 @@ The application runs in a loop until the user chooses to exit.
 
 ## Data Model
 
-- JSON was chosen for data storage because it is lightweight, human-readable, and well-suited for small to medium datasets used in command-line applications.
+- Google Sheets was used as the primary data storage solution for this project.
 
-- Data is stored locally in a JSON file with the following structure:
+- Two worksheets are used:
+  - `transactions`
+  - `budgets`
 
-{
-  "transactions": [
-    {
-      "id": 1,
-      "date": "2026-01-20",
-      "type": "income",
-      "category": "food",
-      "amount": 45.8,
-      "note": "no"
-    },
-    {
-      "id": 2,
-      "date": "2026-01-29",
-      "type": "expense",
-      "category": "rent",
-      "amount": 790.0,
-      "note": ""
-    }
-  ],
-  "budgets": [
-    {
-      "month": "2026-01",
-      "category": "rent",
-      "limit": 800.0
-    }
-  ]
-}
+- This approach allows data to persist between sessions while avoiding local file storage issues on Heroku.
 
-![deployment-structure](documentation/deployment1.PNG)
+![deployment-structure](documentation/deployment-1.PNG)
 
-![deployment](documentation/deployment2.PNG)
+![deployment](documentation/deployment-2.PNG)
 
+![deployment-view](documentation/deployment-3.PNG)
+
+### Transactions worksheet structure
+
+| id | date | type | category | amount | note |
+|----|------|------|----------|--------|------|
+
+### Budgets worksheet structure
+
+| month | category | limit |
+|------|----------|-------|
+
+- Data is loaded at application startup and written back to Google Sheets whenever a transaction or budget is added or updated.
 
 ## Program Flow
 
 - The application starts in run.py
 
-- Data is loaded from the JSON file on startup
+- Data is loaded from Google Sheets on application startup
 
 - User input is handled through dedicated prompt functions
 
 - Feature-specific logic is separated into reusable functions
 
-- Data is saved back to the JSON file after changes
+- Data is written back to Google Sheets after changes
 
 ## Input Validation and Error Handling
 
@@ -156,11 +145,12 @@ The application runs in a loop until the user chooses to exit.
 | Feature | Test Case | Expected Result | Outcome |
 | ------- | --------- | ---------------- | ------- |
 | Main Menu | Enter invalid input | Error message displayed | Pass |
-| Add Transaction | Enter valid data | Transaction saved to JSON | Pass |
+| Add Transaction | Enter valid data | Transaction saved to Google Sheets | Pass |
 | Add Transaction | Enter invalid amount | Prompt user again | Pass |
 | View Transactions | No transactions exist | Message shown | Pass |
 | Monthly Report | Valid month entered | Correct totals shown | Pass |
 | Budgets | Set budget and compare | Remaining/overspent shown | Pass |
+| Budgets | Update existing budget | Budget updated in Google Sheets | Pass |
 | CSV Export | Export transactions | CSV file created | Pass |
 
 ### Code Validation
@@ -171,30 +161,47 @@ The application runs in a loop until the user chooses to exit.
 - Minor formatting issues were identified, such as missing final newlines and inconsistent spacing.  
 - These issues were corrected to ensure the code conforms to PEP8 standards.
 
-![pep8](documentation/pep8.PNG)
+![pep8](documentation/pep8-testing.PNG)
 
 ## Bugs and Fixes
 
-### Bug: Program would not run from root folder
 
-- **Issue**: Running `python run.py` from the outer project folder caused a file not found error.
-- **Fix**: Ensured the application is run from the inner project directory where `run.py` is located.
+### Bug: Budget category saved as number instead of text
 
-### Bug: Invalid menu input caused unexpected behaviour
+- **Issue**: When setting a budget, the category value was incorrectly saved as the numeric limit (e.g. `200` instead of `Food`).
+- **Cause**: Variable misalignment when passing parameters to the budget update function.
+- **Fix**: Refactored the `set_budget()` logic and introduced a dedicated `upsert_budget()` function to correctly separate category and limit handling.
 
-- **Issue**: Users could enter non-numeric values at menus.
-- **Fix**: Added input validation and defensive checks in all menu handlers.
+### Bug: Duplicate budgets created for the same month and category
+
+- **Issue**: Setting a budget for the same month and category created duplicate rows instead of updating the existing one.
+- **Fix**: Implemented an upsert pattern that checks for an existing `(month, category)` pair before updating or appending.
+
+### Bug: Tables not displaying correctly in terminal
+
+- **Issue**: Transaction and budget data printed as plain text instead of formatted tables.
+- **Fix**: Added the `tabulate` library and refactored output logic to display data in structured tables.
+
+### Bug: Category matching failed due to inconsistent casing
+
+- **Issue**: Budgets were not matched correctly due to case differences (e.g. `food` vs `Food`).
+- **Fix**: Normalized category input using `.strip().lower()` for comparisons and `.title()` for display.
+
+### Bug: Import errors during refactoring
+
+- **Issue**: Application failed to start due to incorrect imports after refactoring storage logic.
+- **Fix**: Consolidated Google Sheets logic into `storage_sheets.py` and updated imports consistently.
 
 ## Libraries and Technologies Used
 
 ### Python Standard Library
 
-- [json](https://docs.python.org/3/library/json.html)
-   - Used for persistent storage of transactions and budgets.
 - [csv](https://docs.python.org/3/library/csv.html) 
     - Used to export transaction data and reports.
+
 - [datetime](https://docs.python.org/3/library/datetime.html)
    -  Used to validate date input.
+
 - [os](https://docs.python.org/3/library/os.html)
    -  Used for file and folder handling.
 
@@ -202,9 +209,22 @@ The application runs in a loop until the user chooses to exit.
 
 This project is based on the Code Institute Python Essentials Template, which includes:
 - [gspread](https://pypi.org/project/gspread/)
-- [google-auth](https://pypi.org/project/google-auth/)
+   - Used to connect to and interact with Google Sheets.
 
-These libraries were retained for template compatibility but are not directly used in this project.
+- [google-auth](https://pypi.org/project/google-auth/)
+  - Used to connect to and interact with Google Sheets.
+
+-  [tabulate](https://pypi.org/project/tabulate/)  
+   - Used to display transactions, budgets, and reports in formatted tables within the terminal.
+
+
+## Future Features
+
+- User authentication to support multiple users
+- Category-based charts and visual summaries
+- Ability to edit or delete existing transactions
+- Export budgets alongside transactions
+- Support for different currencies
 
 ## Deployment
 
@@ -225,6 +245,9 @@ Deployment steps:
 - Code Institute Python Essentials Template
 
 - Python documentation
+
+- [Website Mockup Generator](https://websitemockupgenerator.com/)  
+   - Used to create the project mockup image displayed in the documentation.
 
 ## Acknowledgements
 
